@@ -1,0 +1,99 @@
+openapi: 3.0.0
+info:
+  title: PoolManager API
+  version: 1.0.0
+  description: API to enqueue Jobs 
+paths:
+  /tenants/{id}/deployments:
+    post:
+      description: Enqueues a new deployment to run
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EnqueueDeployment'
+      responses:
+        '201':
+          description: Sucessfully enqueued deployment
+          content:
+            application:json:
+              schema:
+                $ref: '#/components/schemas/Deployment'
+        '400':
+          $ref: '#/components/responses/400Error'
+    get: 
+      description: Get all /deployments
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Sucessfully fetched al /deployments
+          content:
+            application:json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Deployment'
+
+components:
+  schemas:
+    EnqueueDeployment:
+      type: object
+      required:
+        - tenantId
+        - definitionId
+        - deploymentName
+        - yaml
+        - parameters
+      properties:
+        tenantId:
+          type: string
+        definitionId:
+          type: string
+        deploymentName:
+          type: string
+        yaml:
+          type: string
+          format: byte
+        parameters:
+          type: string
+          format: byte
+    Deployment:
+      type: object
+      properties:
+        tenantId:
+          type: string
+        definitionId:
+          type: string
+        id:
+          type: string
+        deploymentName: 
+          type: string
+        liveStreamName:
+          type: string
+        state:
+          type: integer
+        timestamp:
+          type: string
+          format: date-time
+  responses:
+    400Error:
+      description: Invalid request
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string

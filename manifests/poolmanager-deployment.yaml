@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agentpool-manager
+  namespace: cs-agent
+  labels:
+    application: cloud-shipper
+    component: agentpool-manager
+spec:
+  replicas: 1
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      application: cloud-shipper
+      component: agentpool-manager
+  template:
+    metadata:
+      labels:
+        application: cloud-shipper
+        component: agentpool-manager
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: agentpool-manager
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "300m"
+          image: m009/cs-agentpool-manager:0.3.2
+          ports:
+            - containerPort: 5000
+          imagePullPolicy: IfNotPresent
+          command: ["./poolmanager"]
+          args: [
+            "-m", "kubernetes",
+            "-storage-mode", "azure",
+            "-p", "5000", 
+            "-s", "nats://example-nats.default.svc.cluster.local:4222", 
+            "-cluster-id", "example-stan", 
+            "-pool-manager-channel", "poolmanager", 
+            "-agent-channel", "jobqueue", 
+            "-config-filepath", "/config/poolmngr-storageconfig.yaml"]
+          volumeMounts:
+            - name: config
+              mountPath: "/config"
+              readOnly: true 
+      volumes:
+        - name: config
+          secret:
+            secretName: poolmngr-storage
+            items:
+              - key: storage
+                path: poolmngr-storageconfig.yaml
+      terminationGracePeriodSeconds: 60

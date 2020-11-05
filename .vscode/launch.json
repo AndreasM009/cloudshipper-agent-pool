@@ -21,6 +21,32 @@
                 "-pool-manager-channel",
                 "poolmanager"
             ]
+        },
+        {
+            "name": "Launch PoolManager",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}/cmd/poolmanager",
+            "env": {},
+            "args": [
+                "-m",
+                "local",
+                "-storage-mode",
+                "azure",
+                "-config-filepath",
+                "/Users/${env:USER}/.cloudshipper/poolmngr-storageconfig.yaml",
+                "-p",
+                "8084",
+                "-s",
+                "localhost:4222",
+                "-cluster-id",
+                "example-stan",
+                "-agent-channel",
+                "jobqueue",
+                "-pool-manager-channel",
+                "poolmanager"
+            ]
         }
     ]
 }

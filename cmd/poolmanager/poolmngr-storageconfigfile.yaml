@@ -1,0 +1,4 @@
+# Sample config file for pool manager's storage
+storageAccountName:
+storageAccountKey: 
+storageBlobContainer: poolmanager

@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agentpool-filter
+  namespace: cs-agent
+  labels:
+    application: cloud-shipper
+    component: agentpool-filter
+spec:
+  replicas: 2
+  strategy: 
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  minReadySeconds: 5
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      application: cloud-shipper
+      component: agentpool-filter
+  template:
+    metadata:
+      labels:
+        application: cloud-shipper
+        component: agentpool-filter
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: agentpool-filter
+          resources:
+            requests:
+              memory: "16Mi"
+              cpu: "100m"
+            limits:
+              memory: "32Mi"
+              cpu: "300m"
+          image: m009/cs-agentpool-filter:0.3.2
+          imagePullPolicy: IfNotPresent
+          command: ["./filter"]
+          args: [
+            "-s", "nats://example-nats.default.svc.cluster.local:4222", 
+            "-cluster-id", "example-stan", 
+            "-pool-manager-channel", "poolmanager", 
+            "-agent-channel", "agentevents"]
+      terminationGracePeriodSeconds: 60

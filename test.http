@@ -1,0 +1,13 @@
+POST http://localhost:8084/tenants/t1/deployments HTTP/1.1
+Content-Type: application/json
+
+{
+    "tenantId":"t1",
+    "definitionId": "d1",
+    "deploymentName": "dep1test",
+    "yaml": "",
+    "parameters": ""
+}
+
+###
+GET http://localhost:8084/tenants/t1/deployments HTTP/1.1

@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: cs-agent
+  labels:
+    run: volumedemo
+  name: volumedemo
+spec:
+  containers:
+  - image: alpine
+    name: volumedemo
+    command: ["sleep", "3600"]
+    volumeMounts:
+    # mount the config volume to path /config
+    - name: config
+      mountPath: "/config"
+      readOnly: true
+  volumes:
+  # set volumes at the Pod level, then mount them into containers inside the pod
+    - name: config
+      secret:
+        secretName: poolmngr-storage
+        items:
+          - key: storage
+            path: poolmngr-storageconfig.yaml

@@ -2,8 +2,11 @@ package filter
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"strings"
+
+	"github.com/google/uuid"
 )
 
 var theRuntimeInstance *Runtime
@@ -65,11 +68,13 @@ func (runtime *Runtime) FromFlags() {
 		log.Println("No pool manager channel specified")
 	}
 
+	clientID := fmt.Sprintf("cs-agpool-filter-%s", uuid.New().String())
+
 	runtime.NatsConnectionName = "agentfilter"
 	runtime.NatsConnectionStrings = strings.Split(serverURLs, ",")
 	runtime.NatsStreamingClusterID = clusterID
 	runtime.PoolManagerChannelName = poolManagerChannelName
-	runtime.NastStreamingClientID = "agentfilter"
+	runtime.NastStreamingClientID = clientID
 	runtime.AgentEventChannelName = agentChannelName
 }
 
